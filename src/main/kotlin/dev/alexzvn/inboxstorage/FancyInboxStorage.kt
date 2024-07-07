@@ -2,6 +2,7 @@ package dev.alexzvn.inboxstorage
 
 import com.jonahseguin.drink.Drink
 import dev.alexzvn.inboxstorage.commands.RootCommand
+import dev.alexzvn.inboxstorage.http.API
 import mc.obliviate.inventory.InventoryAPI
 import org.bukkit.plugin.java.JavaPlugin
 
@@ -23,10 +24,12 @@ class FancyInboxStorage : JavaPlugin() {
         InventoryAPI(this).init()
 
         command.registerCommands()
+
+        saveDefaultConfig()
     }
 
-
-    override fun onLoad() {
-
+    fun reload() {
+        reloadConfig()
+        API.setup(config)
     }
 }

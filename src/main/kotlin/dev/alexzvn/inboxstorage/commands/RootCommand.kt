@@ -1,7 +1,9 @@
 package dev.alexzvn.inboxstorage.commands
 
 import com.jonahseguin.drink.annotation.Command
+import com.jonahseguin.drink.annotation.Require
 import com.jonahseguin.drink.annotation.Sender
+import dev.alexzvn.inboxstorage.FancyInboxStorage
 import dev.alexzvn.inboxstorage.gui.InboxInventory
 import dev.alexzvn.inboxstorage.storage.Storage
 import org.bukkit.Material
@@ -27,6 +29,12 @@ class RootCommand {
         }
 
         InboxInventory(sender).open()
+    }
+
+    @Command(name = "reload", desc = "Reload plugin")
+    @Require("fis.admin.reload")
+    fun reload() {
+        FancyInboxStorage.instance().reload()
     }
 }
 

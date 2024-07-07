@@ -23,6 +23,8 @@ dependencies {
 
     compileOnly("org.spigotmc:spigot-api:1.18.2-R0.1-SNAPSHOT")
     compileOnly("me.clip:placeholderapi:2.11.6")
+
+    implementation("org.apache.httpcomponents:fluent-hc:4.5.5")
     implementation("com.google.code.gson:gson:2.11.0")
     implementation("com.github.hamza-cskn.obliviate-invs:core:4.3.0")
     implementation("com.github.hamza-cskn.obliviate-invs:pagination:4.3.0")
