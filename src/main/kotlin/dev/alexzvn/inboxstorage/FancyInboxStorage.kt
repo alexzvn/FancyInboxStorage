@@ -22,10 +22,9 @@ class FancyInboxStorage : JavaPlugin() {
         }
 
         InventoryAPI(this).init()
-
         command.registerCommands()
-
         saveDefaultConfig()
+        API.setup(config)
     }
 
     fun reload() {

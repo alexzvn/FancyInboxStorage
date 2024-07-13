@@ -5,18 +5,26 @@ import org.apache.http.client.fluent.Request
 
 class SimpleAPI(url: String, private var token: String?) {
     val endpoint: String = StringUtils.stripEnd(url, "/")
+    var headers = mapOf<String, String>()
 
     val bearer: String
         get() = "Bearer $token"
 
     constructor(url: String) : this(url, null) {}
 
-
     private fun join(uri: String) = "$endpoint/${StringUtils.strip(uri, "/")}"
-    private fun wrap(request: Request) = request.also {
+    private fun wrap(request: Request) = request.let {
+        var req = it
+
         if (token != null) {
-            it.addHeader("Authorization", bearer)
+            req = req.addHeader("Authorization", bearer)
         }
+
+        for (header in headers.entries) {
+            req = req.addHeader(header.key, header.value)
+        }
+
+        req
     }
 
     fun get(uri: String) = wrap(Request.Get(join(uri)))

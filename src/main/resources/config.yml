@@ -2,5 +2,6 @@
 
 api:
   secret: 0x000000000000000000000
-  repository: http://fancymc.net/api/data
-  uploader: http://fancymc.net/api/uploader
+  endpoint: http://fancymc.net/api/data
+  headers:
+    Minecraft-Server: atlanta

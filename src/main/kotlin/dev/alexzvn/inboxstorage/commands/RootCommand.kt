@@ -5,7 +5,11 @@ import com.jonahseguin.drink.annotation.Require
 import com.jonahseguin.drink.annotation.Sender
 import dev.alexzvn.inboxstorage.FancyInboxStorage
 import dev.alexzvn.inboxstorage.gui.InboxInventory
+import dev.alexzvn.inboxstorage.http.API
+import dev.alexzvn.inboxstorage.http.dto.UploadItem
 import dev.alexzvn.inboxstorage.storage.Storage
+import org.apache.http.client.fluent.Async
+import org.apache.http.entity.ContentType
 import org.bukkit.Material
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
@@ -31,10 +35,35 @@ class RootCommand {
         InboxInventory(sender).open()
     }
 
+    @Command(name = "upload", desc = "Upload current item to cloud")
+    @Require("fis.admin.upload")
+    fun upload(@Sender sender: CommandSender) {
+        if (sender !is Player) {
+            return
+        }
+
+        val item = sender.inventory.itemInMainHand
+
+        if (item.type == Material.AIR) {
+            return
+        }
+
+        API.client!!.post("/")
+            .bodyString(UploadItem.from(item).json(), ContentType.APPLICATION_JSON)
+            .execute()
+            .handleResponse {
+                val code = it.statusLine.statusCode
+                val message = String(it.entity.content.readAllBytes())
+                sender.sendMessage("($code) $message")
+            }
+    }
+
     @Command(name = "reload", desc = "Reload plugin")
     @Require("fis.admin.reload")
-    fun reload() {
+    fun reload(@Sender sender: CommandSender) {
         FancyInboxStorage.instance().reload()
+
+        sender.sendMessage("plugin reloaded")
     }
 }
 

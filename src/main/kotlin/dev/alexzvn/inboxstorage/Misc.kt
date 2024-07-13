@@ -3,6 +3,7 @@ package dev.alexzvn.inboxstorage
 import me.clip.placeholderapi.PlaceholderAPI
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
+import org.bukkit.Material
 import org.bukkit.World
 import org.bukkit.attribute.Attribute
 import org.bukkit.entity.Player
@@ -35,6 +36,8 @@ fun File.copyRecursiveTo(folder: File) {
         Files.copy(it, target.toPath(), StandardCopyOption.REPLACE_EXISTING)
     }
 }
+
+fun Material.displayName() = this.name.replace("_", " ").lowercase().replaceFirstChar { it.uppercase() }
 
 /**
  * Convert a block to base64 string

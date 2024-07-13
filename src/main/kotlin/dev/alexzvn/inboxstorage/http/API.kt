@@ -1,25 +1,31 @@
 package dev.alexzvn.inboxstorage.http
 
+import dev.alexzvn.inboxstorage.debug
 import org.bukkit.configuration.file.FileConfiguration
 
 object API {
-    var uploader: SimpleAPI? = null
-    var repository: SimpleAPI? = null
+    var client: SimpleAPI? = null
 
     fun setup(config: FileConfiguration) {
-
         val token = config.getString("api.secret")
-        val repository = config.getString("api.repository")
-        val uploader = config.getString("api.uploader")
+        val endpoint = config.getString("api.endpoint")
 
-        when (uploader != null) {
-            true -> this.uploader = SimpleAPI(uploader, token)
-            false -> this.uploader = null
+        val headers = config.getConfigurationSection("api.headers").let {
+            if (it == null) {
+                "header is null".debug()
+                return@let mapOf()
+            }
+
+            mutableMapOf<String, String>().apply {
+                for (key in it.getKeys(true)) {
+                    set(key, it.getString(key, "") as String)
+                }
+            }
         }
 
-        when (repository != null) {
-            true -> this.repository = SimpleAPI(repository, token)
-            false -> this.repository = null
+        when (endpoint != null) {
+            true -> this.client = SimpleAPI(endpoint, token).also { it.headers = headers }
+            false -> "Endpoint client is not configured".debug()
         }
     }
 }
