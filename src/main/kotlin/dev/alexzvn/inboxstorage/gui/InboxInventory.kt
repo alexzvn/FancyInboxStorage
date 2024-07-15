@@ -10,7 +10,7 @@ import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.event.inventory.InventoryOpenEvent
 
-class InboxInventory(player: Player) : Gui(player, "testgui", "Inbox", 6) {
+class InboxInventory(player: Player) : Gui(player, "fis-inbox", "Inbox", 6) {
     private val pagination = PaginationManager(this)
 
     val prev = Icon(Material.BLUE_STAINED_GLASS_PANE).setName("Prev")
