@@ -16,6 +16,7 @@ repositories {
     maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
     maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
     maven("https://repo.xenondevs.xyz/releases")
+    maven("https://repo.loohpjames.com/repository")
 }
 
 dependencies {
@@ -23,8 +24,13 @@ dependencies {
 
     compileOnly("org.spigotmc:spigot-api:1.18.2-R0.1-SNAPSHOT")
     compileOnly("me.clip:placeholderapi:2.11.6")
+    compileOnly("com.loohp:InteractiveChatDiscordSrvAddon:4.2.11.0")
+    compileOnly("com.loohp:InteractiveChat:4.2.11.0") {
+        exclude("net.kyori")
+    }
 
-    implementation("org.apache.httpcomponents:fluent-hc:4.5.5")
+    implementation("org.apache.httpcomponents:fluent-hc:4.5.13")
+    implementation("org.apache.httpcomponents:httpmime:4.3.1")
     implementation("com.google.code.gson:gson:2.11.0")
     implementation("com.github.hamza-cskn.obliviate-invs:core:4.3.0")
     implementation("com.github.hamza-cskn.obliviate-invs:pagination:4.3.0")

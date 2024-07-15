@@ -107,7 +107,6 @@ fun Listener.unbind() {
     HandlerList.unregisterAll(this)
 }
 
-
 fun String.debug(prefix: String): String {
     return prefix + this.debug()
 }
@@ -121,6 +120,8 @@ fun Player.heal() {
     foodLevel = 20
     saturation = 20f
 }
+
+fun serverHasPlugin(name: String) = Bukkit.getPluginManager().getPlugin(name) != null
 
 /**
  * Using PlaceholderAPI to replace placeholder

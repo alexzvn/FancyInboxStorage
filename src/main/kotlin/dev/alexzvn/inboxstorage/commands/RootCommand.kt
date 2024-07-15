@@ -4,6 +4,7 @@ import com.jonahseguin.drink.annotation.Command
 import com.jonahseguin.drink.annotation.Require
 import com.jonahseguin.drink.annotation.Sender
 import dev.alexzvn.inboxstorage.FancyInboxStorage
+import dev.alexzvn.inboxstorage.PlayerUUID
 import dev.alexzvn.inboxstorage.asyncTask
 import dev.alexzvn.inboxstorage.gui.InboxInventory
 import dev.alexzvn.inboxstorage.gui.MailingConfirmGui
@@ -45,8 +46,13 @@ class RootCommand {
             return
         }
 
+        val player = Bukkit.getOfflinePlayer(PlayerUUID.find(recipient))
+
+        if (sender.uniqueId == player.uniqueId) {
+            return sender.sendMessage("You can't send mail to your self")
+        }
+
         asyncTask {
-            val player = Bukkit.getOfflinePlayer(recipient)
             if (! player.hasPlayedBefore() || player.name == null) {
                 return@asyncTask sender.sendMessage("This player is not played before")
             }
@@ -70,8 +76,12 @@ class RootCommand {
             return
         }
 
-        API.client!!.post("/")
-            .bodyString(UploadItem.from(item).json(), ContentType.APPLICATION_JSON)
+        val uploadItem = UploadItem.from(item).apply {
+            generateImagePreview(item, sender)
+        }
+
+        API.client.post("/")
+            .body(uploadItem.formData())
             .execute()
             .handleResponse {
                 val code = it.statusLine.statusCode

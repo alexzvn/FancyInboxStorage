@@ -4,7 +4,7 @@ import dev.alexzvn.inboxstorage.debug
 import org.bukkit.configuration.file.FileConfiguration
 
 object API {
-    var client: SimpleAPI? = null
+    lateinit var client: SimpleAPI
 
     fun setup(config: FileConfiguration) {
         val token = config.getString("api.secret")
