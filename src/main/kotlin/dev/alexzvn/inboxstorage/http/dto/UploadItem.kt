@@ -15,11 +15,13 @@ import org.apache.http.entity.mime.HttpMultipartMode
 import org.apache.http.entity.mime.MultipartEntityBuilder
 import org.apache.http.entity.mime.content.ByteArrayBody
 import org.apache.http.entity.mime.content.StringBody
+import org.bukkit.ChatColor
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import java.awt.image.BufferedImage
+import java.nio.charset.Charset
 
-fun String.body() = StringBody(this, ContentType.DEFAULT_TEXT)
+fun String.body() = StringBody(this, ContentType.create("text/plain", "UTF-8"))
 fun BufferedImage.body(name: String) = ByteArrayBody(
     ImageUtils.toArray(this),
     ContentType.create("image/png"),
@@ -54,6 +56,8 @@ class UploadItem {
     fun formData(): HttpEntity {
         return MultipartEntityBuilder.create().run {
             setMode(HttpMultipartMode.BROWSER_COMPATIBLE)
+            setCharset(Charset.forName("UTF-8"))
+
             addPart("name", name.body())
             addPart("amount", amount.toString().body())
             addPart("material", material.body())
@@ -81,7 +85,7 @@ class UploadItem {
             return UploadItem().apply {
                 name = when (item.itemMeta?.displayName.isNullOrBlank()) {
                     true -> item.type.displayName()
-                    else -> item.itemMeta!!.displayName
+                    else -> ChatColor.stripColor(item.itemMeta!!.displayName).toString()
                 }
 
                 when(item.itemMeta?.hasCustomModelData() == true) {
