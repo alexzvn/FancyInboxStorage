@@ -2,6 +2,10 @@
 
 api:
   secret: 0x000000000000000000000
-  endpoint: http://fancymc.net/api/data
+  endpoint: http://fancymc.net/api/paper
   headers:
     Minecraft-Server: atlanta
+
+# default use player name as index
+# change to true if you want to use uuid index instead
+storage-uuid-mode: false

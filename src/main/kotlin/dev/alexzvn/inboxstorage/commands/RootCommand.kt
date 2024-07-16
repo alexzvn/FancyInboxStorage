@@ -1,16 +1,16 @@
 package dev.alexzvn.inboxstorage.commands
 
+import com.google.gson.Gson
+import com.google.gson.JsonObject
 import com.jonahseguin.drink.annotation.Command
 import com.jonahseguin.drink.annotation.Require
 import com.jonahseguin.drink.annotation.Sender
-import dev.alexzvn.inboxstorage.FancyInboxStorage
-import dev.alexzvn.inboxstorage.PlayerUUID
-import dev.alexzvn.inboxstorage.asyncTask
+import dev.alexzvn.inboxstorage.*
 import dev.alexzvn.inboxstorage.gui.InboxInventory
 import dev.alexzvn.inboxstorage.gui.MailingConfirmGui
 import dev.alexzvn.inboxstorage.http.API
 import dev.alexzvn.inboxstorage.http.dto.UploadItem
-import dev.alexzvn.inboxstorage.nextTick
+import dev.alexzvn.inboxstorage.http.dto.body
 import dev.alexzvn.inboxstorage.storage.Storage
 import org.apache.http.client.fluent.Async
 import org.apache.http.entity.ContentType
@@ -80,13 +80,25 @@ class RootCommand {
             generateImagePreview(item, sender)
         }
 
-        API.client.post("/")
+        API.client.post("/upload")
             .body(uploadItem.formData())
             .execute()
             .handleResponse {
                 val code = it.statusLine.statusCode
                 val message = String(it.entity.content.readAllBytes())
-                sender.sendMessage("($code) $message")
+
+                try {
+                    val body = Gson().fromJson(message, JsonObject::class.java)
+
+                    when (body.has("message")) {
+                        true -> sender.sendMessage("($code) ${body.get("message").asString}".mcText())
+                        else -> sender.sendMessage("($code) $message")
+                    }
+
+
+                } catch (e: Exception) {
+                    sender.sendMessage("($code) $message")
+                }
             }
     }
 

@@ -2,6 +2,17 @@ package dev.alexzvn.inboxstorage.http
 
 import org.apache.commons.lang.StringUtils
 import org.apache.http.client.fluent.Request
+import org.apache.http.config.Registry
+import org.apache.http.config.RegistryBuilder
+import org.apache.http.conn.socket.ConnectionSocketFactory
+import org.apache.http.conn.socket.PlainConnectionSocketFactory
+import org.apache.http.conn.ssl.NoopHostnameVerifier
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory
+import org.apache.http.impl.client.HttpClients
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager
+import org.apache.http.ssl.SSLContextBuilder
+import javax.net.ssl.SSLContext
+
 
 class SimpleAPI(url: String, private var token: String?) {
     val endpoint: String = StringUtils.stripEnd(url, "/")

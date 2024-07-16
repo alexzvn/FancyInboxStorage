@@ -7,6 +7,8 @@ object API {
     lateinit var client: SimpleAPI
 
     fun setup(config: FileConfiguration) {
+        System.setProperty("https.protocols", "TLSv1.2,TLSv1.3");
+
         val token = config.getString("api.secret")
         val endpoint = config.getString("api.endpoint")
 
