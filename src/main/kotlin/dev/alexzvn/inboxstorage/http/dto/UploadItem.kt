@@ -2,11 +2,9 @@ package dev.alexzvn.inboxstorage.http.dto
 
 import com.google.gson.Gson
 import com.loohp.interactivechat.api.InteractiveChatAPI
-import com.loohp.interactivechatdiscordsrvaddon.api.InteractiveChatDiscordSrvAddonAPI
 import com.loohp.interactivechatdiscordsrvaddon.graphics.ImageGeneration
 import com.loohp.interactivechatdiscordsrvaddon.graphics.ImageUtils
 import com.loohp.interactivechatdiscordsrvaddon.utils.DiscordItemStackUtils
-import dev.alexzvn.inboxstorage.FancyInboxStorage
 import dev.alexzvn.inboxstorage.displayName
 import dev.alexzvn.inboxstorage.encode
 import dev.alexzvn.inboxstorage.serverHasPlugin
@@ -20,17 +18,20 @@ import org.apache.http.entity.mime.content.StringBody
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import java.awt.image.BufferedImage
-import java.io.ByteArrayOutputStream
-import java.io.File
-import javax.imageio.ImageIO
 
 fun String.body() = StringBody(this, ContentType.DEFAULT_TEXT)
+fun BufferedImage.body(name: String) = ByteArrayBody(
+    ImageUtils.toArray(this),
+    ContentType.create("image/png"),
+    name
+)
 
 class UploadItem {
     lateinit var name: String
     lateinit var material: String
     lateinit var data: String
     lateinit var sha1: String
+    lateinit var amount: Number
     var preview: BufferedImage? = null
     var icon: BufferedImage? = null
     var customModelData: Int? = null
@@ -41,7 +42,7 @@ class UploadItem {
         }
 
         InteractiveChatAPI.getICPlayer(player).apply {
-            icon = ImageGeneration.getItemStackImage(item, this)
+            icon = ImageGeneration.getItemStackImage(item, this, 128)
             preview = DiscordItemStackUtils.getToolTip(item, this).let {
                 ImageGeneration.getToolTipImage(it.components)
             }
@@ -54,6 +55,7 @@ class UploadItem {
         return MultipartEntityBuilder.create().run {
             setMode(HttpMultipartMode.BROWSER_COMPATIBLE)
             addPart("name", name.body())
+            addPart("amount", amount.toString().body())
             addPart("material", material.body())
             addPart("data", data.body())
             addPart("sha1", sha1.body())
@@ -62,22 +64,12 @@ class UploadItem {
                 addPart("customModelData", customModelData.toString().body())
             }
 
-            if (preview != null) {
-                val file = ByteArrayBody(
-                    ImageUtils.toArray(preview),
-                    ContentType.create("image/png"),
-                    "preview.png"
-                )
-
-                addPart("preview", file)
+            preview?.run {
+                addPart("preview", body("preview.png"))
             }
 
-            if (icon != null) {
-                val file = ByteArrayBody(
-                    ImageUtils.toArray(preview),
-                    ContentType.create("image/png"),
-                    "icon.png"
-                )
+            icon?.run {
+                addPart("icon", body("icon.png"))
             }
 
             build()
@@ -97,6 +89,7 @@ class UploadItem {
                     else -> {}
                 }
 
+                amount = item.amount
                 material = item.type.name
                 data = item.encode()
                 sha1 = DigestUtils.sha1Hex(data)
