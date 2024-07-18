@@ -1,6 +1,7 @@
 package dev.alexzvn.inboxstorage.gui
 
 import dev.alexzvn.inboxstorage.debug
+import dev.alexzvn.inboxstorage.lang.t
 import dev.alexzvn.inboxstorage.storage.Storage
 import mc.obliviate.inventory.Gui
 import mc.obliviate.inventory.Icon
@@ -10,7 +11,7 @@ import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.event.inventory.InventoryOpenEvent
 
-class InboxInventory(player: Player) : Gui(player, "fis-inbox", "Inbox", 6) {
+class InboxInventory(player: Player) : Gui(player, "fis-inbox", "", 6) {
     private val pagination = PaginationManager(this)
 
     val prev = Icon(Material.BLUE_STAINED_GLASS_PANE).setName("Prev")
@@ -19,6 +20,7 @@ class InboxInventory(player: Player) : Gui(player, "fis-inbox", "Inbox", 6) {
     init {
         load()
         register()
+        title = t("inbox")
     }
 
     private fun register() {

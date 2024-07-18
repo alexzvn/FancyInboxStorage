@@ -16,22 +16,16 @@ object PlayerUUID {
             return cache[name]!!
         }
 
-        Bukkit.getPlayer(name)?.run {
-            return uniqueId.also { cache[name] = it }
-        }
-
-        for (player in Bukkit.getOfflinePlayers()) {
-            if (player.name == name) {
-                return player.uniqueId.also { cache[name] = it }
+        if (Bukkit.getOnlineMode()) {
+            Bukkit.getPlayer(name)?.run {
+                return uniqueId.also { cache[name] = it }
             }
-        }
 
-        try {
-            generateOnlineUUID(name).also {
-                if (it !== null) return it.also { cache[name] = it }
+            for (player in Bukkit.getOfflinePlayers()) {
+                if (player.name == name) {
+                    return player.uniqueId.also { cache[name] = it }
+                }
             }
-        } catch (_: HttpResponseException) {
-            // skip to generate offline uuid
         }
 
         generateOfflineUUID(name).also {

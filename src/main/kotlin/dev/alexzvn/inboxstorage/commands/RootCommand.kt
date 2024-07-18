@@ -10,10 +10,8 @@ import dev.alexzvn.inboxstorage.gui.InboxInventory
 import dev.alexzvn.inboxstorage.gui.MailingConfirmGui
 import dev.alexzvn.inboxstorage.http.API
 import dev.alexzvn.inboxstorage.http.dto.UploadItem
-import dev.alexzvn.inboxstorage.http.dto.body
+import dev.alexzvn.inboxstorage.lang.t
 import dev.alexzvn.inboxstorage.storage.Storage
-import org.apache.http.client.fluent.Async
-import org.apache.http.entity.ContentType
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.command.CommandSender
@@ -34,7 +32,7 @@ class RootCommand {
     @Command(name = "inbox", aliases = ["inbox"], desc = "View inbox")
     fun inbox(@Sender sender: CommandSender) {
         if (sender !is Player) {
-            return
+            return sender.sendMessage(t("command.require.player"))
         }
 
         InboxInventory(sender).open()
@@ -43,18 +41,18 @@ class RootCommand {
     @Command(name = "mail", desc = "mail current held an item to other player")
     fun mail(@Sender sender: CommandSender, recipient: String) {
         if (sender !is Player) {
-            return
+            return sender.sendMessage(t("command.require.player"))
         }
 
         val player = Bukkit.getOfflinePlayer(PlayerUUID.find(recipient))
 
         if (sender.uniqueId == player.uniqueId) {
-            return sender.sendMessage("You can't send mail to your self")
+            return sender.sendMessage(t("command.mail.invalid.self"))
         }
 
         asyncTask {
             if (! player.hasPlayedBefore() || player.name == null) {
-                return@asyncTask sender.sendMessage("This player is not played before")
+                return@asyncTask sender.sendMessage(t("command.mail.invalid.not-found"))
             }
 
             nextTick {
@@ -80,7 +78,8 @@ class RootCommand {
             generateImagePreview(item, sender)
         }
 
-        API.client.post("/upload")
+        asyncTask {
+            API.client.post("/upload")
             .body(uploadItem.formData())
             .execute()
             .handleResponse {
@@ -100,6 +99,7 @@ class RootCommand {
                     sender.sendMessage("($code) $message")
                 }
             }
+        }
     }
 
     @Command(name = "reload", desc = "Reload plugin")

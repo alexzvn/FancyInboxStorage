@@ -1,0 +1,27 @@
+prefix: "[Fancy]"
+
+action:
+  confirm: Confirm
+  cancel: Cancel
+
+gui:
+  inbox: Fancy Inbox {player}
+  mailing: Send item to {recipient}
+
+
+command:
+  require:
+    player: This command should run in game
+
+  mail:
+    invalid:
+      self: you Cant send item to your self
+      not-found: This player seem not exists
+
+notification:
+  login: You have {count} items on your inbox
+  mail: You just received {item} from {player}. Use "/fis inbox" to get it
+  remote: New item just arrived to your inbox, use "/fis inbox" to get it
+
+plugin:
+  reload: Plugin reloaded successfully
